@@ -4,6 +4,15 @@ The purpose of this mod is to provide sensor capabilities to Smoothieware needed
 
 The design of this module is represented here: [[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/Forge%20Module%20Block%20Diagram.pdf|Forge Module Block Diagram]].
 
+The files that are changed or added from Smoothieware-edge are:
+*[[https://github.com/buchananmatt/Smoothieware/blob/edge/src/main.cpp|main.cpp]] - to add the module to the kernel,
+*[[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/src/modules/tools/forge/Forge.cpp|Forge.cpp]] - contains on event functions,
+*[[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/src/modules/tools/forge/Forge.h|Forge.h]] - header file for the Forge class,
+*[[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/src/modules/tools/forge/Bus.cpp|Bus.cpp]] - handles the I2C bus and reading from the sensors,
+*[[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/src/modules/tools/forge/Bus.h|Bus.h]] - header file for the Bus class,
+*[[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/src/modules/tools/forge/mlx90614.cpp|mlx90614.cpp]] - library for the Sparkfun MLX90614 IR Sensor,
+*[[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/src/modules/tools/forge/mlx90614.h|mlx90614.h]] - header file for the mlx90614 class.
+
 Current status is the module will work for a short period of time, but causes erratic print head movement, then causes Smoothie to crash. Specifically what happens is all movement stops and USB communication is lost. My hypothesis is that I2C is causing a timing issue, but I am not sure. Advice and assistance is welcome.
 
 
