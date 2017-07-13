@@ -1,3 +1,0 @@
-new to github
-
-this file is just to test gitpush
