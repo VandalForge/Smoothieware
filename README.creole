@@ -1,5 +1,11 @@
-Current build status: {{https://travis-ci.org/Smoothieware/Smoothieware.svg?branch=edge}}
+==Forgeware Mod
+by Matthew Buchanan.
+The purpose of this mod is to provide sensor capabilities to Smoothieware needed for development of an arc welding technology based 3D Metal Printer. Specifically what we needed to add was capability to read from sensors using I2C, in order to determine the temperature of the base metal before and after the arc passes over. To accomplish this mod contains an additional module to Smoothieware called forge, which determines the print head direction, reads from the appropriate sensors, and prints the results over USB to the host. 
 
+Current status is the module will work for a short period of time, but causes erratic print head movement, then causes Smoothie to crash. Specifically what happens is all movement stops and USB communication is lost. My hypothesis is that I2C is causing a timing issue.
+
+
+==Begin Smoothieware Documentation
 ==Overview
 Smoothie is a free, opensource, high performance G-code interpreter and CNC controller written in Object-Oriented C++ for the LPC17xx micro-controller ( ARM Cortex M3 architecture ). It will run on a mBed, a LPCXpresso, a SmoothieBoard, R2C2 or any other LPC17xx-based board. The motion control part is a port of the awesome grbl.
 
