@@ -2,7 +2,7 @@
 by Matthew Buchanan.
 The purpose of this mod is to provide sensor capabilities to Smoothieware needed for development of an arc welding technology based 3D Metal Printer. Specifically what we needed to add was capability to read from sensors using I2C, in order to determine the temperature of the base metal before and after the arc passes over. To accomplish this, this mod contains an additional module to Smoothieware called forge, which determines the print head direction, reads from the appropriate sensors, and prints the results over USB to the host. This will eventually lead to a feedback loop, allowing Smoothieware to determine wire feed rate and print speed based on temperature input.
 
-The design of this module is represented here: [[Smoothieware/Forge Module Block Diagram.pdf|Forge Module Block Diagram]].
+The design of this module is represented here: [[https://github.com/buchananmatt/Smoothieware/blob/Forgeware/Forge%20Module%20Block%20Diagram.pdf|Forge Module Block Diagram]].
 
 Current status is the module will work for a short period of time, but causes erratic print head movement, then causes Smoothie to crash. Specifically what happens is all movement stops and USB communication is lost. My hypothesis is that I2C is causing a timing issue, but I am not sure. Advice and assistance is welcome.
 
