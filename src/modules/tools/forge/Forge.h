@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*																								 */
 /*	Forge.h																						 */
-/*	28 June 2017																	 */
+/*	28 June 2017																				 */
 /*	Matthew Buchanan																			 */
-/*	Forgeware																				 */
+/*	Forgeware																					 */
 /*																								 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,6 @@ class Forge: public Module {
 		//these events will trigger the appropriate functions to execute
 		void on_module_loaded(); 				//register for events called by the kernel
 		void on_second_tick(void *argument);	//register for events called by the kernel
-		void on_halt(void *argument); 			//register for events called by the kernel
 		
 		friend class Bus;						//needs access to private data struct in Forge
 	private:									//use pointers for efficient memory allocation and manipulation
@@ -33,7 +32,6 @@ class Forge: public Module {
 		void get_temperature();					//private member function, this calls the bus controller
 		void print_profile();					//private member function, this calls the printer (only a method not an object)
 
-		
 		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
 		
 			//values for on_second_tick() event to adjust frequency

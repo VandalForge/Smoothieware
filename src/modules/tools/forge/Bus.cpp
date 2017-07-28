@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*																								 */
 /*	Bus.cpp																					     */
-/*	28 June 2017																	 */
+/*	28 June 2017																				 */
 /*	Matthew Buchanan																			 */
-/*	Forgeware																				 */
+/*	Forgeware																					 */
 /*																								 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,6 @@
 Bus::Bus() {
 	north = 0xB4; //will eventually have 8 sensors, for now just testing with one
 }
-
 void Bus::get_temp(Forge* f) {
 /*
  *	This function decides which sensors to read from based on the direction the print head is currently moving.
@@ -54,7 +53,7 @@ float Bus::read_sensor(int addr) {
 		return rawObj;
 	}
 	else {
-		THEKERNEL->streams->printf("Failed I2C Read in Read Sensor\n");
+		THEKERNEL->streams->printf("Failed I2C Read in Bus.cpp::read_sensor()\n");
 		return 0; //indicate a failed read
 	}
 }

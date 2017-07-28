@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*																								 */
 /*	Forge.cpp																				     */
-/*	28 June 2017																 */
+/*	28 June 2017																				 */
 /*	Matthew Buchanan																			 */
-/*	Forgeware 																				 */
+/*	Forgeware 																					 */
 /*																								 */
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +41,6 @@ void Forge::on_module_loaded() {
 	this->controller = new Bus();				//should only be initiated once
 	
 	this->register_for_event(ON_SECOND_TICK); 	//event occurs every second by a timer
-	this->register_for_event(ON_HALT); 			//event occurs when smoothie is halted (may be useful to report maximum temperature!!!)
 } 
 void Forge::on_second_tick(void *argument) {
 /*
@@ -57,10 +56,6 @@ void Forge::on_second_tick(void *argument) {
 	get_temperature(); 
 	print_profile();
 }
-void Forge::on_halt(void *argument) {
-
-	return;
-} 
 void Forge::get_direction() {
 /*	
  *	This function finds the current direction of the print head by comparing the current
