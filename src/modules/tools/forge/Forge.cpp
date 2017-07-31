@@ -25,9 +25,7 @@
 #include <stdint.h>						//allows use of uint8_t
 
 Forge::Forge() {
-	second_counter = 0;
-	current_delay = 1;
-
+	
 	north = false;
 	south = false;
 	east = false;
@@ -40,17 +38,9 @@ void Forge::on_module_loaded() {
 	
 	this->controller = new Bus();				//should only be initiated once
 	
-	this->register_for_event(ON_SECOND_TICK); 	//event occurs every second by a timer
+	this->register_for_event(ON_MAIN_LOOP); 	//event occurs every second by a timer
 } 
-void Forge::on_second_tick(void *argument) {
-/*
- *	when this event is called, the current direction (if moving) is found, the temperature profile is found, then both are printed to the serial monitor.
- */
-	//adjusts how frequently the temperature profile is read (maximum is 1 HZ)
-	second_counter++; 
-	if(second_counter < current_delay) return;
-	second_counter = 0;
-	THEKERNEL->streams->printf("Tick\n"); //debugging purposes
+void Forge::on_main_loop(void *argument) {
 	
 	get_direction(); 
 	get_temperature(); 

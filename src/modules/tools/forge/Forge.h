@@ -21,7 +21,7 @@ class Forge: public Module {
 		
 		//these events will trigger the appropriate functions to execute
 		void on_module_loaded(); 				//register for events called by the kernel
-		void on_second_tick(void *argument);	//register for events called by the kernel
+		void on_main_loop(void *argument);	//register for events called by the kernel
 		
 		friend class Bus;						//needs access to private data struct in Forge
 	private:									//use pointers for efficient memory allocation and manipulation
@@ -34,10 +34,6 @@ class Forge: public Module {
 
 		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
 		
-			//values for on_second_tick() event to adjust frequency
-			int second_counter;					//internal second counter
-			int current_delay;					//delay for this many seconds
-			
 			//current movement direction
 			bool north;							//true if print head is moving toward the north
 			bool south;							//true if print head is moving toward the south
