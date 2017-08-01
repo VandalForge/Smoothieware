@@ -26,6 +26,8 @@
 
 Forge::Forge() {
 	
+	tick = 0;
+	
 	north = false;
 	south = false;
 	east = false;
@@ -38,29 +40,53 @@ void Forge::on_module_loaded() {
 	
 	this->controller = new Bus();				//should only be initiated once
 	
-	this->register_for_event(ON_MAIN_LOOP); 	//event occurs every second by a timer
+	this->register_for_event(ON_MAIN_LOOP);
+	this->register_for_event(ON_IDLE);
+	this->register_for_event(ON_SECOND_TICK);
 } 
 void Forge::on_main_loop(void *argument) {
 	
-	get_direction(); 
-	get_temperature(); 
-	print_profile();
+	if(tick) {
+		get_direction(); 
+		get_temperature(); 
+		print_profile();
+//		THEKERNEL->streams->printf("tick triggered on_main_loop\n");
+		tick = 0;
+	}
+}
+void Forge::on_idle(void *argument) {
+	
+	if(tick) {
+		get_direction(); 
+		get_temperature(); 
+		print_profile();
+//		THEKERNEL->streams->printf("tick triggered on_idle\n");
+		tick = 0;
+	}
+}
+void Forge::on_second_tick(void *argument) {
+	
+	if(!tick) { tick = 1;}
 }
 void Forge::get_direction() {
 /*	
  *	This function finds the current direction of the print head by comparing the current
  *	step profile and direction bits of the current block.
  */
-	const Block *block = StepTicker::getInstance()->get_current_block();
+ 
+ 	north = false;
+	south = false;
+	east = false;
+	west = false;
+ 
+	block = StepTicker::getInstance()->get_current_block();
+	
 	if(block != nullptr && block->is_ready && block->is_ticking) { 
 		std::bitset<k_max_actuators> bits = block->direction_bits;
 		std::string bits_str = bits.to_string();
 		char temp[k_max_actuators+1] = {0}; 
         std::copy(bits_str.begin(), bits_str.end(), temp);
-		north = false;
-		south = false;
-		east = false;
-		west = false;
+
 		if(block->steps[0] > 0 && block->steps[1] > 0) { //possible directions are NW, SW, NE, SE
 			if(temp[3] == '1' && temp[4] == '1') 		{south = true; east = true;}
 			else if(temp[3] == '0' && temp[4] == '0') 	{north = true; west = true;}
@@ -68,15 +94,14 @@ void Forge::get_direction() {
 			else if(temp[3] == '0' && temp[4] == '1')	{north = true; east = true;}
 		}
 		if(block->steps[0] > 0 && block->steps[1] == 0) { //possible directions are W and E
-			if(temp[4] == '1') east = true;
-			else west = true;
+			if(temp[4] == '1') 	east = true;
+			else 				west = true;
 		}
 		if(block->steps[0] == 0 && block->steps[1] > 0) { //possible directions are N and S
-			if(temp[3] == '1') south = true;
-			else north = true;
+			if(temp[3] == '1') 	south = true;
+			else 				north = true;
 		}
 	}
-	delete block;
 }
 void Forge::get_temperature() {
 /*
