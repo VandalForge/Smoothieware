@@ -40,19 +40,9 @@ void Forge::on_module_loaded() {
 	
 	this->controller = new Bus();				//should only be initiated once
 	
-	this->register_for_event(ON_MAIN_LOOP);
 	this->register_for_event(ON_IDLE);
-	this->register_for_event(ON_SECOND_TICK);
-} 
-void Forge::on_main_loop(void *argument) {
 	
-	if(tick) {
-		get_direction(); 
-		get_temperature(); 
-		print_profile();
-//		THEKERNEL->streams->printf("tick triggered on_main_loop\n");
-		tick = 0;
-	}
+	THEKERNEL->slow_ticker->attach(4, this, &Forge::set_tick);
 }
 void Forge::on_idle(void *argument) {
 	
@@ -60,13 +50,13 @@ void Forge::on_idle(void *argument) {
 		get_direction(); 
 		get_temperature(); 
 		print_profile();
-//		THEKERNEL->streams->printf("tick triggered on_idle\n");
 		tick = 0;
 	}
 }
-void Forge::on_second_tick(void *argument) {
+uint32_t Forge::set_tick(uint32_t dummy) {
 	
-	if(!tick) { tick = 1;}
+	if(!tick) {tick = 1;}
+	return 0;
 }
 void Forge::get_direction() {
 /*	

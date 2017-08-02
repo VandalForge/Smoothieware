@@ -12,6 +12,7 @@
 #include "libs/Module.h" 						//allows use of Module class as superclass (Smoothie library)
 #include <stdint.h>
 
+
 class Bus;
 class Block;
 
@@ -22,9 +23,7 @@ class Forge: public Module {
 		
 		//these events will trigger the appropriate functions to execute
 		void on_module_loaded(); 				//register for events called by the kernel
-		void on_main_loop(void *argument);	//register for events called by the kernel
 		void on_idle(void *argument);
-		void on_second_tick(void *argument);
 		
 		friend class Bus;						//needs access to private data struct in Forge
 		
@@ -32,11 +31,13 @@ class Forge: public Module {
 		Bus *controller;						//set up a controller object to talk to the sensors	(should only be one instance)		
 		const Block *block;
 		
-		//these are the three main components of the forge module
-		void get_direction();					//private member function, this calls the direction finder (only a method not an object)
-		void get_temperature();					//private member function, this calls the bus controller
-		void print_profile();					//private member function, this calls the printer (only a method not an object)
+		//these are the action functions of the forge module
+		void get_direction();					//calls the direction finder (only a method not an object)
+		void get_temperature();					//calls the bus controller
+		void print_profile();					//calls the printer (only a method not an object)
 
+		uint32_t set_tick(uint32_t dummy);
+		
 		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
 		
 			bool tick;
