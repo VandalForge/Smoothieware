@@ -33,7 +33,7 @@ class Forge: public Module {
 		
 		//these are the action functions of the forge module
 		void get_direction();					//calls the direction finder (only a method not an object)
-		void get_temperature();					//calls the bus controller
+		void get_temperature();					//calls the bus controller object
 		void print_profile();					//calls the printer (only a method not an object)
 
 		uint32_t set_tick(uint32_t dummy);

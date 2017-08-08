@@ -8,6 +8,7 @@
 #include "libs/Kernel.h"
 
 #include "modules/tools/forge/Forge.h"
+#include "modules/tools/forge/WireFeed.h"
 #include "modules/tools/laser/Laser.h"
 #include "modules/tools/spindle/SpindleMaker.h"
 #include "modules/tools/extruder/ExtruderMaker.h"
@@ -182,7 +183,8 @@ void init() {
     #ifndef NO_TOOLS_ROTARYDELTACALIBRATION
     kernel->add_module( new(AHB0) RotaryDeltaCalibration() );
     #endif
-	kernel->add_module( new(AHB0) Forge() ); //Custom Vandal Forge Module
+	kernel->add_module( new(AHB0) Forge() ); //Custom module for printhead temperature profile
+    kernel->add_module( new(AHB0) WireFeed() ); //Custom module for wire feed motor
     #ifndef NONETWORK
     kernel->add_module( new Network() );
     #endif
