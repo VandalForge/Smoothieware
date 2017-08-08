@@ -128,7 +128,7 @@ void Forge::print_profile() {
 			THEKERNEL->streams->printf("Direction:NW - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
 		}
 		else {
-			THEKERNEL->streams->printf("Direction:N - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:N  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
 		}
 	}
 	else if(south) {
@@ -139,13 +139,13 @@ void Forge::print_profile() {
 			THEKERNEL->streams->printf("Direction:SW - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
 		}
 		else {
-			THEKERNEL->streams->printf("Direction:S - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:S  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
 		}
 	}
 	else if(west) {
-		THEKERNEL->streams->printf("Direction:W - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+		THEKERNEL->streams->printf("Direction:W  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
 	}
 	else if(east) {
-		THEKERNEL->streams->printf("Direction:E - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+		THEKERNEL->streams->printf("Direction:E  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
 	}
 }

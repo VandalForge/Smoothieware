@@ -36,6 +36,7 @@ bool MLX90614::getTemp(float* temp_val){
     p2=i2c->read(1);     					//Tobj heigh byte
     p3=i2c->read(0);     					//PEC
     
+	(void)p3;								//we're currently ignoring the PEC, this line prevents compilation warnings
     i2c->stop();                            //stop condition
      
     

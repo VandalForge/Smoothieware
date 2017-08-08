@@ -5,6 +5,8 @@
       You should have received a copy of the GNU General Public License along with Smoothie. If not, see <http://www.gnu.org/licenses/>.
 */
 
+//	This file has been edited for Forgeware (M220 - feed override command)
+
 #include "libs/Module.h"
 #include "libs/Kernel.h"
 
@@ -112,6 +114,7 @@ Robot::Robot()
     this->disable_segmentation= false;
     this->disable_arm_solution= false;
     this->n_motors= 0;
+	factor = 100.0F;
 }
 
 //Called when the module has just been loaded
@@ -739,7 +742,7 @@ void Robot::on_gcode_received(void *argument)
 
             case 220: // M220 - speed override percentage
                 if (gcode->has_letter('S')) {
-                    float factor = gcode->get_value('S');
+					factor += gcode->get_value('S');	//this line was changed to allow relative override changes
                     // enforce minimum 10% speed
                     if (factor < 10.0F)
                         factor = 10.0F;
@@ -748,9 +751,10 @@ void Robot::on_gcode_received(void *argument)
                         factor = 1000.0F;
 
                     seconds_per_minute = 6000.0F / factor;
-                } else {
-                    gcode->stream->printf("Speed factor at %6.2f %%\n", 6000.0F / seconds_per_minute);
-                }
+//                } else {
+                    gcode->stream->printf("Feed (travel) factor at %0.0f %%\n", 6000.0F / seconds_per_minute);
+					gcode->stream->printf("Feed (travel) rate is %0.0f mm/min\n", this->feed_rate * factor/100);
+	            }
                 break;
 
             case 400: // wait until all moves are done up to this point

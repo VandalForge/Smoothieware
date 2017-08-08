@@ -24,11 +24,14 @@ class WireFeed: public Module {
 
 		void on_module_loaded();
 		void on_gcode_received(void *argument);
-
+		
 	private:
+	
+		float pwm_duty_cycle();
+	
 		mbed::PwmOut *feed_pin;
-		int rate;
-		int multiplier;
+		float rate;
+		float factor;
 		uint32_t period;
 		bool feeding;
 };
