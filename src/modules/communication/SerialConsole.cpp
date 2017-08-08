@@ -17,6 +17,8 @@ using std::string;
 #include "libs/StreamOutput.h"
 #include "libs/StreamOutputPool.h"
 
+#include "RealTime.h"
+
 // Serial reading module
 // Treats every received line as a command and passes it ( via event call ) to the command dispatcher.
 // The command dispatcher will then ask other modules if they can do something with it
@@ -52,6 +54,17 @@ void SerialConsole::on_serial_char_received(){
             halt_flag= true;
             continue;
         }
+// begin custom code for real time features (based on GRBL 1.1)
+// GRBL takes advantage of register manipulation to accomplish rt
+// I'm going to attempt to do it only in software for now.
+        switch (recieved) { //for now only feed override commands
+            case FEED_OVR_RESET: set_flag(EXEC_FEED_RESET); break;
+            case FEED_OVR_COARSE_PLUS: set_flag(EXEC_FEED_COURSE_PLUS); break;
+            case FEED_OVR_COARSE_MINUS: set_flag(EXEC_FEED_COURSE_MINUS); break;
+            case FEED_OVR_FINE_PLUS: set_flag(EXEC_FEED_FINE_PLUS); break;
+            case FEED_OVR_FINE_MINUS: set_flag(EXEC_FEED_FINE_MINUS); break;
+        }
+// end custom code for real time features
         // convert CR to NL (for host OSs that don't send NL)
         if( received == '\r' ){ received = '\n'; }
         this->buffer.push_back(received);
