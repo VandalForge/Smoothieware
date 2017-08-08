@@ -22,8 +22,9 @@ class Forge: public Module {
 		~Forge() {}; 							//class destructor
 		
 		//these events will trigger the appropriate functions to execute
-		void on_module_loaded(); 				//register for events called by the kernel
+		void on_module_loaded();
 		void on_idle(void *argument);
+		void on_gcode_received(void *argument);
 		
 		friend class Bus;						//needs access to private data struct in Forge
 		
@@ -41,6 +42,7 @@ class Forge: public Module {
 		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
 		
 			bool tick;
+			bool enable;
 		
 			//current movement direction
 			bool north;							//true if print head is moving toward the north
