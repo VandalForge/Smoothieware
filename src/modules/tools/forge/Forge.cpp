@@ -12,6 +12,7 @@
 
 #include "Module.h"
 #include "Kernel.h"
+#include "Robot.h"
 #include "StreamOutputPool.h"
 #include "StepTicker.h"
 #include "SlowTicker.h"
@@ -30,6 +31,8 @@ Forge::Forge() {
 	tick = 0;
 	enable = 0;
 	
+	frequency = 8.00F;
+	
 	north = false;
 	south = false;
 	east = false;
@@ -37,6 +40,8 @@ Forge::Forge() {
 
 	initial_temp = 0;
 	final_temp = 0;
+	
+	time = 0;
 }
 void Forge::on_module_loaded() {
 	
@@ -45,12 +50,13 @@ void Forge::on_module_loaded() {
 	this->register_for_event(ON_IDLE);
 	this->register_for_event(ON_GCODE_RECEIVED);
 	
-	THEKERNEL->slow_ticker->attach(4, this, &Forge::set_tick);
+	THEKERNEL->slow_ticker->attach((int)frequency, this, &Forge::set_tick);
 }
 void Forge::on_idle(void *argument) {
 	
 	if(tick && enable) {
 		get_direction(); 
+		get_current_position();
 		get_temperature(); 
 		print_profile();
 		tick = 0;
@@ -61,10 +67,10 @@ void Forge::on_gcode_received(void *argument) {
 	Gcode *gcode = static_cast<Gcode *>(argument);
 
     if (gcode->has_m) {
-        if (gcode->m == 701) { // enable temperature profile recording
+        if (gcode->m == 701) { // enable temperature profile recording, tool path is starting
 			enable = 1;
         }
-		else if (gcode->m == 702) { // disable temperature profile recording
+		else if (gcode->m == 702) { // disable temperature profile recording, tool path has ended
 			enable = 0;
 		}
     }
@@ -72,6 +78,7 @@ void Forge::on_gcode_received(void *argument) {
 uint32_t Forge::set_tick(uint32_t dummy) {
 	
 	if(!tick) {tick = 1;}
+	if(enable) {time += (1.00F/frequency);}
 	return 0;
 }
 void Forge::get_direction() {
@@ -109,6 +116,11 @@ void Forge::get_direction() {
 		}
 	}
 }
+void Forge::get_current_position() {
+	
+	position.clear();
+	THEROBOT->print_position(1, position, true);
+}
 void Forge::get_temperature() {
 /*
  *	This function finds the initial and final temperatures at each interval, using the direction profile
@@ -122,30 +134,46 @@ void Forge::print_profile() {
  */
 	if(north) {
 		if(east) {
-			THEKERNEL->streams->printf("Direction:NE - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:NE - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+			THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 		}
 		else if(west) {
-			THEKERNEL->streams->printf("Direction:NW - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:NW - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+			THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 		}
 		else {
-			THEKERNEL->streams->printf("Direction:N  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:N  - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+			THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 		}
 	}
 	else if(south) {
 		if(east) {
-			THEKERNEL->streams->printf("Direction:SE - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:SE - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+			THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 		}
 		else if(west) {
-			THEKERNEL->streams->printf("Direction:SW - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:SW - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+			THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 		}
 		else {
-			THEKERNEL->streams->printf("Direction:S  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Direction:S  - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+			THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+			THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 		}
 	}
 	else if(west) {
-		THEKERNEL->streams->printf("Direction:W  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+		THEKERNEL->streams->printf("Direction:W  - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+		THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+		THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 	}
 	else if(east) {
-		THEKERNEL->streams->printf("Direction:E  - Initial Temp:%f - Final Temp:%f\n", initial_temp, final_temp);
+		THEKERNEL->streams->printf("Direction:E  - Initial Temp:%4.2f - Final Temp:%4.2f\n", initial_temp, final_temp);
+		THEKERNEL->streams->printf("Current Position: %s\n", position.c_str());
+		THEKERNEL->streams->printf("Time: %7.2Lf\n", time);
 	}
 }

@@ -44,7 +44,7 @@ void WireFeed::on_module_loaded() {
 	delete dummypin;
 	dummypin = NULL;
 
-//	this->feed_pin->period_us(period);	//this gives the wrong frequency
+//	this->feed_pin->period_us(period);	//this gives the wrong frequency, default seems to be fine
 
 	this->register_for_event(ON_GCODE_RECEIVED);
 }
@@ -55,12 +55,12 @@ void WireFeed::on_gcode_received(void *argument) {
     // M codes execute immediately
     if (gcode->has_m) {
         if (gcode->m == 750) { 
-            if(gcode->has_letter('R')) { 				//this will be the wire feed rate in mmpm, will be a modal command
-                this->rate = gcode->get_value('R');
+            if(gcode->has_letter('S')) { 				//this will be the wire feed rate in mmpm, will be a modal command
+                this->rate = gcode->get_value('S');
             }
             this->feed_pin->write(pwm_duty_cycle()/100.0F); 	//need to put in the relationship between duty cycle and rate
             this->feeding = 1;
-			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle());
+//			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle());
         }
         if (gcode->m == 760) {
         	this->feed_pin->write(0);

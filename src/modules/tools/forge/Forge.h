@@ -11,6 +11,7 @@
 
 #include "libs/Module.h" 						//allows use of Module class as superclass (Smoothie library)
 #include <stdint.h>
+#include <string>
 
 
 class Bus;
@@ -34,15 +35,20 @@ class Forge: public Module {
 		
 		//these are the action functions of the forge module
 		void get_direction();					//calls the direction finder (only a method not an object)
+		void get_current_position();
 		void get_temperature();					//calls the bus controller object
 		void print_profile();					//calls the printer (only a method not an object)
 
 		uint32_t set_tick(uint32_t dummy);
 		
+		std::string position;
+		
 		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
 		
 			bool tick;
 			bool enable;
+			
+			float frequency;
 		
 			//current movement direction
 			bool north;							//true if print head is moving toward the north
@@ -53,5 +59,7 @@ class Forge: public Module {
 			//current temperature profile
 			float initial_temp;					//temperature read from leading sensor
 			float final_temp;					//temperature read from trailing sensor
+			
+			long double time;
 		};
 };
