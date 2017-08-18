@@ -31,7 +31,6 @@ class Bus {
 		struct { 
 			
 			//sensor variables
-			int north;								//IR sensor address
 			int sens[8];							//sensor dummy variables, currently just testing with one sensor
 		};
 };

@@ -18,7 +18,14 @@
 #define SCL p27
 
 Bus::Bus() {
-	north = 0xB4; //will eventually have 8 sensors, for now just testing with one
+	sens[0] = 0xB4;
+	sens[1] = 0x1A;
+	sens[2] = 0x2A;
+	sens[3] = 0x3A;
+	sens[4] = 0x4A;
+	sens[5] = 0x5A;
+	sens[6] = 0x6A;
+	sens[7] = 0x7A;
 }
 void Bus::get_temp(Forge* f) {
 /*
@@ -46,7 +53,7 @@ float Bus::read_sensor(int addr) {
  */
 	//get an error when below functions are in constructor
 	mbed::I2C sensor_bus(SDA, SCL);					
-	MLX90614 IR_thermometer(&sensor_bus, north);
+	MLX90614 IR_thermometer(&sensor_bus, addr);
 
 	float rawObj = 0;
 	if (IR_thermometer.getTemp(&rawObj)) {

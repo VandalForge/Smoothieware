@@ -31,7 +31,7 @@ class WireFeed: public Module {
 	
 		mbed::PwmOut *feed_pin;
 		float rate;
-		float factor;
 		uint32_t period;
 		bool feeding;
+		float factor;
 };

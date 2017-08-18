@@ -23,9 +23,9 @@
 WireFeed::WireFeed() { 
 
 	rate = 10000; 		//default wire feed rate in mm/min
-	factor = 100.0F;
 	period = 20000;		//not sure what the period is supposed to be, differing documentation
 	feeding = 0;
+	factor = 100.0F;
 }
 void WireFeed::on_module_loaded() { 
 
@@ -58,9 +58,9 @@ void WireFeed::on_gcode_received(void *argument) {
             if(gcode->has_letter('S')) { 				//this will be the wire feed rate in mmpm, will be a modal command
                 this->rate = gcode->get_value('S');
             }
-            this->feed_pin->write(pwm_duty_cycle()/100.0F); 	//need to put in the relationship between duty cycle and rate
+            this->feed_pin->write(pwm_duty_cycle()); 	//need to put in the relationship between duty cycle and rate
             this->feeding = 1;
-//			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle());
+			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle());
         }
         if (gcode->m == 760) {
         	this->feed_pin->write(0);
@@ -68,15 +68,25 @@ void WireFeed::on_gcode_received(void *argument) {
         }
         if (gcode->m == 755) { 							//this will be the wire feed rate override command
         	if(gcode->has_letter('S')) { 
-        		this->factor += gcode->get_value('S');
+        		this->factor = gcode->get_value('S');
+				// enforce minimum 10% speed
+				if (factor < 10.0F)
+                    factor = 10.0F;
+                // enforce maximum 10x speed
+                if (factor > 1000.0F)
+                    factor = 1000.0F;
+				
 				THEKERNEL->streams->printf("Wire Feed factor at %0.0f %%\n", factor);
 				THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\n", rate * factor/100.0F);
         		if(this->feeding) {
-        			this->feed_pin->write(pwm_duty_cycle()/100.0F);
+        			this->feed_pin->write(pwm_duty_cycle());
         		} else {
         			this->feed_pin->write(0);
         		}
-        	}
+        	} else {
+				THEKERNEL->streams->printf("Wire Feed factor at %0.0f %%\n", factor);
+				THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\n", rate * factor/100.0F);
+			}
         }
     }
 }
@@ -89,5 +99,5 @@ float WireFeed::pwm_duty_cycle() {
 	float p4 = -0.038416;
 	float p5 = 43.607;
 	
-	return ((p1 * pow(rate, 4))+(p2 * pow(rate, 3))+(p3 * pow(rate, 2))+(p4 * rate)+p5) * factor/100.0F;
+	return ((p1 * pow(rate, 4))+(p2 * pow(rate, 3))+(p3 * pow(rate, 2))+(p4 * rate)+p5) * factor/100.0F * 1/100.0F;
 }
