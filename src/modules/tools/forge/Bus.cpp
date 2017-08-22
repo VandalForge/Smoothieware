@@ -18,14 +18,14 @@
 #define SCL p27
 
 Bus::Bus() {
-	sens[0] = 0xB4;
-	sens[1] = 0x1A;
-	sens[2] = 0x2A;
-	sens[3] = 0x3A;
-	sens[4] = 0x4A;
-	sens[5] = 0x5A;
-	sens[6] = 0x6A;
-	sens[7] = 0x7A;
+	sens[0] = 0x5A;		//north
+	sens[1] = 0xB4;		//northeast
+	sens[2] = 0x2A;		//east
+	sens[3] = 0x3A;		//southeast
+	sens[4] = 0xB4;		//south
+	sens[5] = 0x5A;		//southwest
+	sens[6] = 0x6A;		//west
+	sens[7] = 0x7A;		//northwest
 }
 void Bus::get_temp(Forge* f) {
 /*
@@ -46,6 +46,19 @@ void Bus::get_temp(Forge* f) {
 	else if (f->west)		{f->initial_temp = read_sensor(sens[6]); f->final_temp = read_sensor(sens[2]);}
 	else if (f->east)		{f->initial_temp = read_sensor(sens[2]); f->final_temp = read_sensor(sens[6]);}
 }
+void Bus::get_address(uint8_t* addr) {
+	
+	mbed::I2C sensor_bus(SDA, SCL);					
+	MLX90614 IR_thermometer(&sensor_bus, 0xB4);
+
+	if (IR_thermometer.getAddress(addr)) {
+//		return addr;
+	}
+	else {
+		THEKERNEL->streams->printf("Failed I2C Read in Bus.cpp::get_address()\n");
+//		return 0; //indicate a failed read
+	}
+}
 float Bus::read_sensor(int addr) {  
 /*
  *	This function calls the getTemp function from the MLX90614 library, which performs the I2C read.
@@ -53,7 +66,7 @@ float Bus::read_sensor(int addr) {
  */
 	//get an error when below functions are in constructor
 	mbed::I2C sensor_bus(SDA, SCL);					
-	MLX90614 IR_thermometer(&sensor_bus, addr);
+	MLX90614 IR_thermometer(&sensor_bus, 0xB4);
 
 	float rawObj = 0;
 	if (IR_thermometer.getTemp(&rawObj)) {

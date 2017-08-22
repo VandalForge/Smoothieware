@@ -38,10 +38,12 @@ class Forge: public Module {
 		void get_current_position();
 		void get_temperature();					//calls the bus controller object
 		void print_profile();					//calls the printer (only a method not an object)
-
+		void get_address(uint8_t*);
+		
 		uint32_t set_tick(uint32_t dummy);
 		
 		std::string position;
+		uint8_t address;
 		
 		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
 		

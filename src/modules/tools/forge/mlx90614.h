@@ -14,7 +14,7 @@
 //****************************************************************//
 
 #pragma once
-
+#include <stdint.h>						//allows use of uint8_t
 /**An Interface for MLX90614
 * 
 * @code
@@ -53,6 +53,7 @@ class MLX90614{
         * @return 0 on success (ack), or non-0 on failure (nack)
         */
         bool getTemp(float* temp_val);
+		bool getAddress(uint8_t* addr);
         
     private:
        I2C* i2c;

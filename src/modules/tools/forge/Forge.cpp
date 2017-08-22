@@ -31,9 +31,9 @@ Forge::Forge() {
 	tick = 0;
 	enable = 0;
 	
-	frequency = 8.00F;
+	frequency = 2.00F;
 	
-	north = false;
+	north = true;
 	south = false;
 	east = false;
 	west = false;
@@ -42,6 +42,8 @@ Forge::Forge() {
 	final_temp = 0;
 	
 	time = 0;
+	
+	address = 0xAB; 
 }
 void Forge::on_module_loaded() {
 	
@@ -54,11 +56,14 @@ void Forge::on_module_loaded() {
 }
 void Forge::on_idle(void *argument) {
 	
-	if(tick && enable) {
-		get_direction(); 
-		get_current_position();
-		get_temperature(); 
-		print_profile();
+	if(tick/* && enable */) {
+//		get_direction(); 
+//		get_current_position();
+//		get_temperature(); 
+//		print_profile();
+		get_address(&address);
+		THEKERNEL->streams->printf("%#04x\n", (unsigned int)address);
+//		THEKERNEL->streams->printf("\n");
 		tick = 0;
 	}
 }
@@ -79,6 +84,10 @@ void Forge::on_gcode_received(void *argument) {
 			enable = 0;
 		}
     }
+}
+void Forge::get_address(uint8_t* address) {
+	
+	controller->get_address(address);
 }
 uint32_t Forge::set_tick(uint32_t dummy) {
 	
