@@ -60,7 +60,7 @@ void WireFeed::on_gcode_received(void *argument) {
             }
             this->feed_pin->write(pwm_duty_cycle()); 	//need to put in the relationship between duty cycle and rate
             this->feeding = 1;
-			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle());
+//			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle()*100.0F);
         }
         if (gcode->m == 760) {
         	this->feed_pin->write(0);

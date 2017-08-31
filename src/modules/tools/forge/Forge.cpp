@@ -31,9 +31,9 @@ Forge::Forge() {
 	tick = 0;
 	enable = 0;
 	
-	frequency = 2.00F;
+	frequency = 8.00F;
 	
-	north = true;
+	north = false;
 	south = false;
 	east = false;
 	west = false;
@@ -42,8 +42,7 @@ Forge::Forge() {
 	final_temp = 0;
 	
 	time = 0;
-	
-	address = 0xAB; 
+	 
 }
 void Forge::on_module_loaded() {
 	
@@ -56,14 +55,11 @@ void Forge::on_module_loaded() {
 }
 void Forge::on_idle(void *argument) {
 	
-	if(tick/* && enable */) {
-//		get_direction(); 
-//		get_current_position();
-//		get_temperature(); 
-//		print_profile();
-		get_address(&address);
-		THEKERNEL->streams->printf("%#04x\n", (unsigned int)address);
-//		THEKERNEL->streams->printf("\n");
+	if(tick && enable) {
+		get_direction(); 
+		get_current_position();
+		get_temperature(); 
+		print_profile();
 		tick = 0;
 	}
 }
@@ -85,10 +81,6 @@ void Forge::on_gcode_received(void *argument) {
 		}
     }
 }
-void Forge::get_address(uint8_t* address) {
-	
-	controller->get_address(address);
-}
 uint32_t Forge::set_tick(uint32_t dummy) {
 	
 	if(!tick) {tick = 1;}
@@ -96,10 +88,6 @@ uint32_t Forge::set_tick(uint32_t dummy) {
 	return 0;
 }
 void Forge::get_direction() {
-/*	
- *	This function finds the current direction of the print head by comparing the current
- *	step profile and direction bits of the current block.
- */
  
  	north = false;
 	south = false;
@@ -136,16 +124,11 @@ void Forge::get_current_position() {
 	THEROBOT->print_position(1, position, true);
 }
 void Forge::get_temperature() {
-/*
- *	This function finds the initial and final temperatures at each interval, using the direction profile
- *	to determine which sensors to read from.
- */	
+
 	controller->get_temp(this);
 }
 void Forge::print_profile() {
-/*
- *	This function prints the direction and temperature profile to the serial monitor.
- */
+
 	if(north) {
 		if(east) {
 			THEKERNEL->streams->printf("Direction:NE \nInitial Temp:%4.2f \nFinal Temp:%4.2f\n", initial_temp, final_temp);

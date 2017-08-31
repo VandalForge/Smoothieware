@@ -22,7 +22,6 @@ class Forge: public Module {
 		Forge(); 								//class constructor
 		~Forge() {}; 							//class destructor
 		
-		//these events will trigger the appropriate functions to execute
 		void on_module_loaded();
 		void on_idle(void *argument);
 		void on_gcode_received(void *argument);
@@ -33,17 +32,14 @@ class Forge: public Module {
 		Bus *controller;						//set up a controller object to talk to the sensors	(should only be one instance)		
 		const Block *block;
 		
-		//these are the action functions of the forge module
 		void get_direction();					//calls the direction finder (only a method not an object)
 		void get_current_position();
 		void get_temperature();					//calls the bus controller object
 		void print_profile();					//calls the printer (only a method not an object)
-		void get_address(uint8_t*);
 		
 		uint32_t set_tick(uint32_t dummy);
 		
 		std::string position;
-		uint8_t address;
 		
 		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
 		
@@ -53,10 +49,10 @@ class Forge: public Module {
 			float frequency;
 		
 			//current movement direction
-			bool north;							//true if print head is moving toward the north
-			bool south;							//true if print head is moving toward the south
-			bool east;							//true if print head is moving toward the east
-			bool west;							//true if print head is moving toward the west
+			bool north;
+			bool south;
+			bool east;
+			bool west;
 			
 			//current temperature profile
 			float initial_temp;					//temperature read from leading sensor

@@ -7,7 +7,7 @@
 
 MLX90614::MLX90614(I2C* i2c,int addr){
 
-    this->i2caddress = addr;
+    this->i2caddress = (addr << 1);
     this->i2c = i2c; 
     
 }
@@ -44,40 +44,5 @@ bool MLX90614::getTemp(float* temp_val){
     temp_thermo=((((p2&0x007f)<<8)+p1)*0.02)-0.01;      //degree centigrate conversion
     *temp_val=temp_thermo-273;                          //Convert kelvin to degree Celsius
     
-    return true;                            //load data successfully, return true 
-}
-bool MLX90614::getAddress(uint8_t* addr) {
-	
-	char p1,p2,p3;
-    bool ch;
-
-    i2c->stop();                            //stop i2c if not ack
-
-    i2c->start();                           //start I2C         
-	
-    ch=i2c->write(i2caddress);              //device address with write condition
-    if(!ch) {
-		THEKERNEL->streams->printf("failed in device address\n");
-		return false;                    //No Ack, return False
-    }
-    ch=i2c->write(0x25);                    //device ram address where Tobj value is present
-    if(!ch) {
-		THEKERNEL->streams->printf("failed in command\n");
-		return false;                    //No Ack, return False
-	}
-    i2c->start();                           //repeat start
-    ch=i2c->write(i2caddress|0x01);         //device address with read condition 
-    if(!ch){
-		THEKERNEL->streams->printf("failed in read\n");
-		return false;                    //No Ack, return False
-	}
-    p1=i2c->read(1);     					//Tobj low byte
-    p2=i2c->read(1);     					//Tobj heigh byte
-    p3=i2c->read(0);     					//PEC
-    
-	(void)p3;								//we're currently ignoring the PEC, this line prevents compilation warnings
-    i2c->stop();                            //stop condition
-     
-    *addr = (p2 << 8) | p1;
     return true;                            //load data successfully, return true 
 }

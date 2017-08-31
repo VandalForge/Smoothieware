@@ -21,7 +21,6 @@ class Bus {
 		~Bus();									//class destructor
 		
 		void get_temp(Forge* f);				//public member function, called to set the temperature values in Forge
-		void get_address(uint8_t* addr);
 		
 	private:
 		mbed::I2C sensor_bus(PinName, PinName);	//setup the I2C bus with mbed-style pins
