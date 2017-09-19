@@ -5,8 +5,6 @@
       You should have received a copy of the GNU General Public License along with Smoothie. If not, see <http://www.gnu.org/licenses/>.
 */
 
-//	This file has been edited for Forgeware (M220 - feed override command)
-
 #include "libs/Module.h"
 #include "libs/Kernel.h"
 
