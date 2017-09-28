@@ -44,6 +44,8 @@ class Block {
         float acceleration;       // the acceleration for this block
         float initial_rate;       // Initial rate in steps per second
         float maximum_rate;
+		
+		float temperature;
 
         float max_entry_speed;
 

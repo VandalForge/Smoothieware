@@ -70,6 +70,7 @@ void Block::clear()
     is_g123             = false;
     locked              = false;
     s_value             = 0.0F;
+	temperature			= 0.0F;
 
     total_move_ticks= 0;
     if(tick_info == nullptr) {

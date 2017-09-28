@@ -50,7 +50,7 @@ void Planner::config_load()
 
 
 // Append a block to the queue, compute it's speed factors
-bool Planner::append_block( ActuatorCoordinates &actuator_pos, uint8_t n_motors, float rate_mm_s, float distance, float *unit_vec, float acceleration, float s_value, bool g123)
+bool Planner::append_block( ActuatorCoordinates &actuator_pos, uint8_t n_motors, float rate_mm_s, float distance, float *unit_vec, float acceleration, float s_value, bool g123, float temperature)
 {
     // Create ( recycle ) a new block
     Block* block = THECONVEYOR->queue.head_ref();
@@ -69,6 +69,7 @@ bool Planner::append_block( ActuatorCoordinates &actuator_pos, uint8_t n_motors,
         block->direction_bits[i] = (steps < 0) ? 1 : 0;
         // save actual steps in block
         block->steps[i] = labs(steps);
+		block->temperature = temperature;
     }
 
     // sometimes even though there is a detectable movement it turns out there are no steps to be had from such a small move

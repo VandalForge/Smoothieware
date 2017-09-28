@@ -967,6 +967,7 @@ void Robot::process_move(Gcode *gcode, enum MOTION_MODE_T motion_mode)
     }
     #endif
 
+
     if( gcode->has_letter('F') ) {
         if( motion_mode == SEEK )
             this->seek_rate = this->to_millimeters( gcode->get_value('F') );
@@ -1097,7 +1098,7 @@ void Robot::reset_position_from_current_actuator_position()
 // Convert target (in machine coordinates) to machine_position, then convert to actuator position and append this to the planner
 // target is in machine coordinates without the compensation transform, however we save a compensated_machine_position that includes
 // all transforms and is what we actually convert to actuator positions
-bool Robot::append_milestone(const float target[], float rate_mm_s)
+bool Robot::append_milestone(const float target[], float rate_mm_s, float temperature)
 {
     float deltas[n_motors];
     float transformed_target[n_motors]; // adjust target for bed compensation
@@ -1235,7 +1236,7 @@ bool Robot::append_milestone(const float target[], float rate_mm_s)
     // Append the block to the planner
     // NOTE that distance here should be either the distance travelled by the XYZ axis, or the E mm travel if a solo E move
     // NOTE this call will bock until there is room in the block queue, on_idle will continue to be called
-    if(THEKERNEL->planner->append_block( actuator_pos, n_motors, rate_mm_s, distance, auxilliary_move ? nullptr : unit_vec, acceleration, s_value, is_g123)) {
+    if(THEKERNEL->planner->append_block( actuator_pos, n_motors, rate_mm_s, distance, auxilliary_move ? nullptr : unit_vec, acceleration, s_value, is_g123, temperature)) {
         // this is the new compensated machine position
         memcpy(this->compensated_machine_position, transformed_target, n_motors*sizeof(float));
         return true;
@@ -1243,6 +1244,11 @@ bool Robot::append_milestone(const float target[], float rate_mm_s)
 
     // no actual move
     return false;
+}
+
+bool Robot::append_milestone(const float target[], float rate_mm_s) {
+	
+	return append_milestone(target, rate_mm_s, 666.6);
 }
 
 // Used to plan a single move used by things like endstops when homing, zprobe, extruder firmware retracts etc.
@@ -1276,6 +1282,11 @@ bool Robot::delta_move(const float *delta, float rate_mm_s, uint8_t naxis)
 // Append a move to the queue ( cutting it into segments if needed )
 bool Robot::append_line(Gcode *gcode, const float target[], float rate_mm_s, float delta_e)
 {
+	float temp_val = 0.0;
+	
+	if( gcode->has_letter('Q') )
+		temp_val = gcode->get_value('Q');
+	
     // catch negative or zero feed rates and return the same error as GRBL does
     if(rate_mm_s <= 0.0F) {
         gcode->is_error= true;
@@ -1288,7 +1299,7 @@ bool Robot::append_line(Gcode *gcode, const float target[], float rate_mm_s, flo
 
     if(millimeters_of_travel < 0.00001F) {
         // we have no movement in XYZ, probably E only extrude or retract
-        return this->append_milestone(target, rate_mm_s);
+        return this->append_milestone(target, rate_mm_s, temp_val);
     }
 
     /*
@@ -1349,13 +1360,13 @@ bool Robot::append_line(Gcode *gcode, const float target[], float rate_mm_s, flo
 
             // Append the end of this segment to the queue
             // this can block waiting for free block queue or if in feed hold
-            bool b= this->append_milestone(segment_end, rate_mm_s);
+            bool b= this->append_milestone(segment_end, rate_mm_s, temp_val);
             moved= moved || b;
         }
     }
 
     // Append the end of this full move to the queue
-    if(this->append_milestone(target, rate_mm_s)) moved= true;
+    if(this->append_milestone(target, rate_mm_s, temp_val)) moved= true;
 
     this->next_command_is_MCS = false; // always reset this
 
@@ -1367,6 +1378,11 @@ bool Robot::append_line(Gcode *gcode, const float target[], float rate_mm_s, flo
 // TODO does not support any E parameters so cannot be used for 3D printing.
 bool Robot::append_arc(Gcode * gcode, const float target[], const float offset[], float radius, bool is_clockwise )
 {
+	float temp_val = 0.0;
+	
+	if( gcode->has_letter('Q') )
+		temp_val = gcode->get_value('Q');
+	
     float rate_mm_s= this->feed_rate / seconds_per_minute;
     // catch negative or zero feed rates and return the same error as GRBL does
     if(rate_mm_s <= 0.0F) {
@@ -1484,12 +1500,12 @@ bool Robot::append_arc(Gcode * gcode, const float target[], const float offset[]
         arc_target[this->plane_axis_2] += linear_per_segment;
 
         // Append this segment to the queue
-        bool b= this->append_milestone(arc_target, rate_mm_s);
+        bool b= this->append_milestone(arc_target, rate_mm_s, temp_val);
         moved= moved || b;
     }
 
     // Ensure last segment arrives at target location.
-    if(this->append_milestone(target, rate_mm_s)) moved= true;
+    if(this->append_milestone(target, rate_mm_s, temp_val)) moved= true;
 
     return moved;
 }
