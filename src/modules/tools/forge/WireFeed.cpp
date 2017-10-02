@@ -15,6 +15,10 @@
 #include "PwmOut.h" // mbed.h lib
 #include "Pin.h"
 #include "StreamOutputPool.h"
+#include "SlowTicker.h"
+#include "Robot.h"
+#include "Block.h"
+#include "StepTicker.h"
 
 #include <math.h>
 
@@ -26,6 +30,10 @@ WireFeed::WireFeed() {
 	period = 20000;		//not sure what the period is supposed to be, differing documentation
 	feeding = 0;
 	factor = 100.0F;
+	ratio = 0;
+	volume_per_mm = 4.49;
+	wire_diam = 0.5842;
+	print_speed = 0;
 }
 void WireFeed::on_module_loaded() { 
 
@@ -47,6 +55,8 @@ void WireFeed::on_module_loaded() {
 //	this->feed_pin->period_us(period);	//this gives the wrong frequency, default seems to be fine
 
 	this->register_for_event(ON_GCODE_RECEIVED);
+	
+	THEKERNEL->slow_ticker->attach(1000, this, &WireFeed::feed_tick);
 }
 void WireFeed::on_gcode_received(void *argument) { 
 
@@ -55,13 +65,19 @@ void WireFeed::on_gcode_received(void *argument) {
     // M codes execute immediately
     if (gcode->has_m) {
         if (gcode->m == 750) { 
-            if(gcode->has_letter('S')) { 				//this will be the wire feed rate in mmpm, will be a modal command
+            if(gcode->has_letter('S') && !ratio) { 				//this will be the wire feed rate in mmpm, will be a modal command
                 this->rate = gcode->get_value('S');
             }
             this->feed_pin->write(pwm_duty_cycle()); 	//need to put in the relationship between duty cycle and rate
             this->feeding = 1;
 //			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle()*100.0F);
         }
+		if (gcode->m == 751) {	//turn on wire feed ratio calculations
+			ratio = 1;
+		}
+		if (gcode->m == 752) {
+			ratio = 0;
+		}
         if (gcode->m == 760) {
         	this->feed_pin->write(0);
         	this->feeding = 0;
@@ -89,6 +105,25 @@ void WireFeed::on_gcode_received(void *argument) {
 			}
         }
     }
+}
+uint32_t WireFeed::feed_tick(uint32_t dummy) {
+	
+	if(ratio) {
+		block = StepTicker::getInstance()->get_current_block();
+		if(block != nullptr && block->is_ready && block->is_g123) {
+			//note, using the nominal_speed is not super accurate because the block may not have reached this speed
+			print_speed = block->nominal_speed * 60.0; //get print speed in mm per min
+			rate = (volume_per_mm * print_speed) / wire_diam;
+			if (feeding) {
+				this->feed_pin->write(pwm_duty_cycle());
+			}
+			else {
+				this->feed_pin->write(0);
+				this->feeding = 0;
+			}
+		}
+	}
+	return 0;
 }
 float WireFeed::pwm_duty_cycle() {
 	

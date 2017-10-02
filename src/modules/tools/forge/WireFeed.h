@@ -13,6 +13,8 @@
 
 #include <stdint.h>
 
+class Block;
+
 namespace mbed { class PwmOut; }
 
 class Pin;
@@ -26,7 +28,8 @@ class WireFeed: public Module {
 		void on_gcode_received(void *argument);
 		
 	private:
-	
+		const Block *block;
+		uint32_t feed_tick(uint32_t dummy);
 		float pwm_duty_cycle();
 	
 		mbed::PwmOut *feed_pin;
@@ -34,4 +37,9 @@ class WireFeed: public Module {
 		uint32_t period;
 		bool feeding;
 		float factor;
+		bool ratio;
+		
+		float volume_per_mm;
+		float wire_diam;
+		float print_speed;
 };
