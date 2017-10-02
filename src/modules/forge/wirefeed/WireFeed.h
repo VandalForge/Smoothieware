@@ -1,23 +1,21 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*																								 */
-/*	WireFeed.h																					 */
-/*	07 August 2017																				 */
-/*	Matthew Buchanan																			 */
-/*	Forgeware																					 */
-/*																								 */
-///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ *	WireFeed.h
+ *	07 August 2017
+ *	Matthew Buchanan
+ *	Forgeware
+ */
 
-#pragma once
-
-#include "libs/Module.h"
+#ifndef WIRE_FEED_H
+#define WIRE_FEED_H
 
 #include <stdint.h>
 
+#include "libs/Module.h"
+
 class Block;
+class Pin;
 
 namespace mbed { class PwmOut; }
-
-class Pin;
 
 class WireFeed: public Module {
 	public:
@@ -43,3 +41,5 @@ class WireFeed: public Module {
 		float wire_diam;
 		float print_speed;
 };
+
+#endif

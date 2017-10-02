@@ -1,7 +1,7 @@
+#ifndef POINT_LIST_H
+#define POINT_LIST_H
 
-#pragma once
-
-#include "Point.h"
+class Point;
 
 class PointList {
 
@@ -20,3 +20,5 @@ class PointList {
 		int count;
 
 };
+
+#endif

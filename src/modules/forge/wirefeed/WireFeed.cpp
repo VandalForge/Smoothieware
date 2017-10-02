@@ -1,11 +1,11 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*																								 */
-/*	WireFeed.cpp																				 */
-/*	07 August 2017																				 */
-/*	Matthew Buchanan																			 */
-/*	Forgeware																					 */
-/*																								 */
-///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ *	WireFeed.cpp
+ *	07 August 2017
+ *	Matthew Buchanan
+ *	Forgeware
+ */
+
+#include <math.h>
 
 #include "WireFeed.h"
 
@@ -19,8 +19,6 @@
 #include "Robot.h"
 #include "Block.h"
 #include "StepTicker.h"
-
-#include <math.h>
 
 #define FEEDPIN "2.5"
 

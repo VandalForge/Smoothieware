@@ -1,5 +1,5 @@
-
-#pragma once
+#ifndef POINT_H
+#define POINT_H
 
 #define NUM_PARAMS 4
 
@@ -20,3 +20,5 @@ class Point {
 	private:
 		float params[NUM_PARAMS];
 };
+
+#endif
