@@ -39,23 +39,7 @@ SensorBus::SensorBus() {
 	sens[6] = 0x6A;		//west
 	sens[7] = 0x7A;		//northwest
 }
-/*
-void Bus::get_temp(Forge* f) {
 
-	if(f->north) {
-		if(f->east) 		{f->initial_temp = read_sensor(sens[1]); f->final_temp = read_sensor(sens[5]);}
-		else if(f->west) 	{f->initial_temp = read_sensor(sens[7]); f->final_temp = read_sensor(sens[3]);}
-		else				{f->initial_temp = read_sensor(sens[0]); f->final_temp = read_sensor(sens[4]);}
-	}
-	else if (f->south) {	
-		if(f->east)			{f->initial_temp = read_sensor(sens[3]); f->final_temp = read_sensor(sens[7]);}
-		else if(f->west)	{f->initial_temp = read_sensor(sens[5]); f->final_temp = read_sensor(sens[1]);}
-		else				{f->initial_temp = read_sensor(sens[4]); f->final_temp = read_sensor(sens[0]);}
-	}
-	else if (f->west)		{f->initial_temp = read_sensor(sens[6]); f->final_temp = read_sensor(sens[2]);}
-	else if (f->east)		{f->initial_temp = read_sensor(sens[2]); f->final_temp = read_sensor(sens[6]);}
-}
-*/
 float SensorBus::read_sensor(int addr) { 
  
 /*	//use for testing without sensors
@@ -86,6 +70,7 @@ float SensorBus::read_sensor(int addr) {
 	}
 /**/
 }
+
 float SensorBus::read(float direction) {
 	
 	if	    (direction >= 338 || direction < 23) 	{return read_sensor(SOUTH);}
@@ -101,6 +86,7 @@ float SensorBus::read(float direction) {
 		return 666;	//error code
 	}
 }
+
 float SensorBus::read(float* curr, float* past) {
 		
 //		float d = 0;
@@ -112,23 +98,5 @@ float SensorBus::read(float* curr, float* past) {
 		if(angle > 0) angle = 360 - angle;
 		if(angle < 0) angle = -angle;
 		
-		return read((float)angle);
-		
-//		if(angle != 0) angle = 360 - angle;
-		
-/*
-		if 		(y == 0 && dir[4] == '1') 		{return 90;} 
-		else if (y == 0 && dir[4] == '0') 		{return 270;} 
-		else if (x == 0 && dir[3] == '1') 		{return 180;}
-		else if (x == 0 && dir[3] == '0') 		{return 0;}
-		else if (dir[3] == '0' && dir[4] == '1') 	{return angle;}		 		//1st quadrant (0-90 degrees)
-		else if (dir[3] == '0' && dir[4] == '0') 	{return 360 - angle;}   	//2st quadrant (270-360 degrees)
-		else if (dir[3] == '1' && dir[4] == '0') 	{return angle + 180;}   	//3rd quadrant (180-270 degrees)
-		else if (dir[3] == '1' && dir[4] == '1') 	{return 180 - angle;}	 	//4th quadrant (90-180 degrees)
-		else {
-			return 666;	//error in function
-		}
-*/		
-		
-//		return angle; //Bus::read(d);
+		return read((float)angle);		
 }

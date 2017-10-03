@@ -1,11 +1,17 @@
+//Melexis Infrared Thermometer MLX90614 Library
 
-#include <stdint.h>						//allows use of uint8_t
+//*****************************************************************
+//  Build : 2011-06-08 Hikaru Sugiura
+//          Only read thermo data.
+//  
+//  This program is based on Mr.Mitesh Patel's "mlx90614".
+//  http://mbed.org/users/mitesh2patel/programs/mlx90614/lqnetj
+//
+//  This program does not check CRC.
+//  If you want to check CRC, please do it your self :)
+//****************************************************************//
 
 #include "MLX90614.h"
-
-#include "Kernel.h"				//for debugging
-#include "StreamOutputPool.h"	//for debugging
-
 
 MLX90614::MLX90614(I2C* i2c,int addr){
 

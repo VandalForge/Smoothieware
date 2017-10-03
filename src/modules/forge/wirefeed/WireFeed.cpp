@@ -11,6 +11,7 @@
 
 #include "Module.h"
 #include "Kernel.h"
+#include "Conveyor.h"
 #include "Gcode.h"
 #include "PwmOut.h" // mbed.h lib
 #include "Pin.h"
@@ -53,6 +54,7 @@ void WireFeed::on_module_loaded() {
 //	this->feed_pin->period_us(period);	//this gives the wrong frequency, default seems to be fine
 
 	this->register_for_event(ON_GCODE_RECEIVED);
+	this->register_for_event(ON_HALT);
 	
 	THEKERNEL->slow_ticker->attach(1000, this, &WireFeed::feed_tick);
 }
@@ -63,6 +65,7 @@ void WireFeed::on_gcode_received(void *argument) {
     // M codes execute immediately
     if (gcode->has_m) {
         if (gcode->m == 750) { 
+			THEKERNEL->conveyor->wait_for_idle();
             if(gcode->has_letter('S') && !ratio) { 				//this will be the wire feed rate in mmpm, will be a modal command
                 this->rate = gcode->get_value('S');
             }
@@ -77,6 +80,7 @@ void WireFeed::on_gcode_received(void *argument) {
 			ratio = 0;
 		}
         if (gcode->m == 760) {
+			THEKERNEL->conveyor->wait_for_idle();
         	this->feed_pin->write(0);
         	this->feeding = 0;
         }
@@ -103,6 +107,11 @@ void WireFeed::on_gcode_received(void *argument) {
 			}
         }
     }
+}
+void WireFeed::on_halt() {
+	
+	this->feed_pin->write(0);
+    this->feeding = 0;
 }
 uint32_t WireFeed::feed_tick(uint32_t dummy) {
 	

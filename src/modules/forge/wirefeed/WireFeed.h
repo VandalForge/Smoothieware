@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#include "libs/Module.h"
+#include "Module.h"
 
 class Block;
 class Pin;
@@ -24,6 +24,7 @@ class WireFeed: public Module {
 
 		void on_module_loaded();
 		void on_gcode_received(void *argument);
+		void on_halt();
 		
 	private:
 		const Block *block;

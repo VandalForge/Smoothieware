@@ -9,6 +9,8 @@
 
 #include "modules/forge/temperaturefeedback/TemperatureFeedback.h"
 #include "modules/forge/wirefeed/WireFeed.h"
+#include "modules/forge/welder/Welder.h"
+#include "modules/forge/gasflow/GasFlow.h"
 
 #include "modules/tools/laser/Laser.h"
 #include "modules/tools/spindle/SpindleMaker.h"
@@ -186,6 +188,8 @@ void init() {
     #endif
 	kernel->add_module( new(AHB0) TemperatureFeedback() ); 	//Custom module for printhead temperature feedback control
     kernel->add_module( new(AHB0) WireFeed() ); 			//Custom module for wire feed motor
+	kernel->add_module( new(AHB0) Welder() );				//Custom module for welder and high voltage control
+	kernel->add_module( new(AHB0) GasFlow() );				//Custom module for gas flow valve
     #ifndef NONETWORK
     kernel->add_module( new Network() );
     #endif

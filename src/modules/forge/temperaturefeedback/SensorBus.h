@@ -9,14 +9,13 @@
 #define SENSOR_BUS_H
 
 #include "MLX90614.h"
-//class MLX90614;
 
 namespace mbed { class I2C; } 					//allows use of pointers to I2C objects (mbed library)
 
 class SensorBus {
 	public:
 		SensorBus();									//class constructor
-		~SensorBus();									//class destructor
+		~SensorBus() {};									//class destructor
 		
 //		void get_temp(Forge* f);				//public member function, called to set the temperature values in Forge
 		

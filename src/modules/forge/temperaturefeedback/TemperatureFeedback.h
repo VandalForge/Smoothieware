@@ -13,7 +13,7 @@
 
 #include "Point.h"
 
-#include "libs/Module.h" 						//allows use of Module class as superclass (Smoothie library)
+#include "Module.h" 						//allows use of Module class as superclass (Smoothie library)
 
 class Block;
 class SensorBus;
@@ -55,7 +55,7 @@ class TemperatureFeedback: public Module {
 		float last_pos[3];
 		float tail_params[NUM_PARAMS];
 		
-		struct { //idea is to only store this data in one location, the other functions/objects will edit this data							
+		struct {						
 		
 			volatile bool tick;
 			volatile bool enable;

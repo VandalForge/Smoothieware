@@ -14,8 +14,6 @@
 #ifndef MLX90614_H
 #define MLX90614_H
 
-#include <stdint.h>						//allows use of uint8_t
-
 #include "mbed.h"
 
 /**An Interface for MLX90614

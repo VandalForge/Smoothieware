@@ -53,6 +53,7 @@ TemperatureFeedback::TemperatureFeedback() {
 	count = 0;
 	
 	block_dir = 664;
+	
 	for(int i = 0; i < 3; i++) {
 		last_pos[i] = 0;
 		pos[i] = 0;
@@ -61,6 +62,7 @@ TemperatureFeedback::TemperatureFeedback() {
 		tail_params[i] = 0;
 	}
 }
+
 void TemperatureFeedback::on_module_loaded() {
 	
 	this->sensorbus = new SensorBus(); //should only be initiated once
@@ -70,16 +72,12 @@ void TemperatureFeedback::on_module_loaded() {
 	this->register_for_event(ON_GCODE_RECEIVED);
 	
 	THEKERNEL->slow_ticker->attach((int)frequency, this, &TemperatureFeedback::set_tick);
-//	THEKERNEL->streams->append_stream(this);
 }
+
 void TemperatureFeedback::on_idle(void *argument) {
 
 	if(tick && enable) {
-//		get_direction(); 
-//		get_current_position();
-//		get_temperature(); 
-//		print_profile();
-		
+
 		//check if moved the point distance (1 mm)
 		//if yes:
 		//	make a point with current position and block->temperature
@@ -91,8 +89,6 @@ void TemperatureFeedback::on_idle(void *argument) {
 		//		issue feedback command
 		//		delete point
 		//number of points at any one time should be equal to N distance / point distance
-		
-		
 		
 		THEROBOT->get_current_machine_position(pos);
 		block = StepTicker::getInstance()->get_current_block();
@@ -144,12 +140,13 @@ void TemperatureFeedback::on_idle(void *argument) {
 		}
 		tick = 0;
 	}
-/*	else if (!enable) {
+/*	else if (!enable) { //this code block seems to contribute to crashing more frequently
 		list->clear_list();
 	}
 */
 /**/
 }
+
 void TemperatureFeedback::on_gcode_received(void *argument) {
 	
 	Gcode *gcode = static_cast<Gcode *>(argument);
@@ -168,24 +165,14 @@ void TemperatureFeedback::on_gcode_received(void *argument) {
 		}
     }
 }
+
 uint32_t TemperatureFeedback::set_tick(uint32_t dummy) {
 	
 	if(!tick) {tick = 1;}
 	if(enable) {time += (1.00F/frequency);}	
 	return 0;
 }
-/*
-uint32_t Forge::pos_check(uint32_t dummy) {
-	
-//	position.clear();
-	float pos[3];
-	THEROBOT->get_current_machine_position(pos);
-	if(distance(pos, last_pos) > 5) {
-		
-	}
-	
-}
-*/
+
 void TemperatureFeedback::get_direction() {
  
  	north = false;
@@ -200,40 +187,22 @@ void TemperatureFeedback::get_direction() {
 		std::string bits_str = bits.to_string();
 		char temp[k_max_actuators+1] = {0}; 
         std::copy(bits_str.begin(), bits_str.end(), temp);
-		
-/*	code replaced with direction() function
-		if(block->steps[0] > 0 && block->steps[1] > 0) { //possible directions are NW, SW, NE, SE
-			if(temp[3] == '1' && temp[4] == '1') 		{south = true; east = true;}
-			else if(temp[3] == '0' && temp[4] == '0') 	{north = true; west = true;}
-			else if(temp[3] == '1' && temp[4] == '0')	{south = true; west = true;}
-			else if(temp[3] == '0' && temp[4] == '1')	{north = true; east = true;}
-		}
-		if(block->steps[0] > 0 && block->steps[1] == 0) { //possible directions are W and E
-			if(temp[4] == '1') 	east = true;
-			else 				west = true;
-		}
-		if(block->steps[0] == 0 && block->steps[1] > 0) { //possible directions are N and S
-			if(temp[3] == '1') 	south = true;
-			else 				north = true;
-		}
-*/		
-		block_dir = direction(block->steps[0], block->steps[1], temp);
-		
-//		THEKERNEL->streams->printf("X: %o, Y: %o, Z: %o\n", block->steps[0], block->steps[1], block->steps[2]);
-//		THEKERNEL->streams->printf("Direction Bits: %c%c\n", temp[3], temp[4]);
-//		THEKERNEL->streams->printf("Direction: %i\n", direction((int)block->steps[0], (int)block->steps[1], temp));
+				
+		block_dir = direction(block->steps[0], block->steps[1], temp);	
 	}
 }
+
 void TemperatureFeedback::get_current_position() {
 	
 	position.clear();
 	THEROBOT->print_position(1, position, true);
 }
+
 void TemperatureFeedback::get_temperature() {
 
-//	controller->get_temp(this);
 	this->sensor_temp = sensorbus->read(block_dir);
 }
+
 /*
 void Forge::print_profile() {
 
@@ -283,6 +252,7 @@ void Forge::print_profile() {
 	}
 }
 */
+
 float TemperatureFeedback::direction(float x, float y, char* dir) {
 	
 	double angle = std::atan2(x,y) * 180.00/PI;
