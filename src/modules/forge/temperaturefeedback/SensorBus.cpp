@@ -55,7 +55,7 @@ float SensorBus::read_sensor(int addr) {
 		return 665;	//error code
 	}
 /**/
-	//Commented out for testing without sensors
+	//Comment out for testing without sensors
 	//get an error when below functions are in constructor
 	mbed::I2C sensor_bus(SDA, SCL);					
 	MLX90614 IR_thermometer(&sensor_bus, addr);
