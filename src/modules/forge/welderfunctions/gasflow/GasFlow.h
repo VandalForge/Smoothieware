@@ -10,17 +10,20 @@
 
 #include <stdint.h>
 
-#include "gpio.h"
 #include "Module.h"
+#include "gpio.h"
 
 class GasFlow: public Module {
 	public:
 		GasFlow();
 		~GasFlow() {};
-
+		
 		void on_module_loaded();
-		void on_gcode_received(void *argument);
 		void on_halt();
+		void on_gcode_received(void *argument);
+		
+		void on();
+		void off();
 		
 	private:
 	

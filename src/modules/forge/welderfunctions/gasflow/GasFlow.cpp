@@ -27,7 +27,10 @@ void GasFlow::on_module_loaded() {
 	this->register_for_event(ON_GCODE_RECEIVED);
 	this->register_for_event(ON_HALT);
 }
-
+void GasFlow::on_halt() {
+	
+	gas_pin = false;
+}
 void GasFlow::on_gcode_received(void *argument) { 
 
 	Gcode *gcode = static_cast<Gcode *>(argument);
@@ -35,17 +38,18 @@ void GasFlow::on_gcode_received(void *argument) {
     // M codes execute immediately
     if (gcode->has_m) {
         if (gcode->m == 770) { // turn gas on
-			THEKERNEL->conveyor->wait_for_idle();
-			gas_pin = true;
+			this->on();
         }
 		if (gcode->m == 780) { // turn gas off (default)
-			THEKERNEL->conveyor->wait_for_idle();	
-			gas_pin = false;
+			this->off();
 		}
     }
 }
-
-void GasFlow::on_halt() {
-	
+void GasFlow::on() {
+	THEKERNEL->conveyor->wait_for_idle();
+	gas_pin = true;
+}
+void GasFlow::off() {
+	THEKERNEL->conveyor->wait_for_idle();	
 	gas_pin = false;
 }

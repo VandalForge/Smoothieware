@@ -10,18 +10,21 @@
 
 #include <stdint.h>
 
-#include "gpio.h"
 #include "Module.h"
+#include "gpio.h"
 
 class Welder: public Module {
 	public:
 		Welder();
 		~Welder() {};
-
-		void on_module_loaded();
-		void on_gcode_received(void *argument);
-		void on_halt();
 		
+		void on_module_loaded();
+		void on_halt();
+		void on_gcode_received(void *argument);
+		
+		void on();
+		void off();
+	
 	private:
 	
 		GPIO on_off_pin = GPIO(P1_22);

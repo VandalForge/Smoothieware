@@ -31,7 +31,12 @@ void Welder::on_module_loaded() {
 	this->register_for_event(ON_GCODE_RECEIVED);
 	this->register_for_event(ON_HALT);
 }
-
+void Welder::on_halt() {
+	
+	on_off_pin = false;
+	high_low_pin = false;
+	polarity_pin = false;
+}
 void Welder::on_gcode_received(void *argument) { 
 
 	Gcode *gcode = static_cast<Gcode *>(argument);
@@ -39,12 +44,10 @@ void Welder::on_gcode_received(void *argument) {
     // M codes execute immediately
     if (gcode->has_m) {
         if (gcode->m == 710) { // turn welder on
-			THEKERNEL->conveyor->wait_for_idle();
-			on_off_pin = true;
+			this->on();
         }
-		if (gcode->m == 720) { // turn welder on (default)
-			THEKERNEL->conveyor->wait_for_idle();	
-			on_off_pin = false;
+		if (gcode->m == 720) { // turn welder off (default)
+			this->off();
 		}
 		if (gcode->m == 711) { // switch to low voltage
 			THEKERNEL->conveyor->wait_for_idle();
@@ -64,10 +67,11 @@ void Welder::on_gcode_received(void *argument) {
 		}
     }
 }
-
-void Welder::on_halt() {
-	
+void Welder::on() {
+	THEKERNEL->conveyor->wait_for_idle();
+	on_off_pin = true;
+}
+void Welder::off() {
+	THEKERNEL->conveyor->wait_for_idle();	
 	on_off_pin = false;
-	high_low_pin = false;
-	polarity_pin = false;
 }

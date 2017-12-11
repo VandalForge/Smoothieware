@@ -58,6 +58,11 @@ void WireFeed::on_module_loaded() {
 	
 	THEKERNEL->slow_ticker->attach(1000, this, &WireFeed::feed_tick);
 }
+void WireFeed::on_halt() {
+	
+	this->feed_pin->write(0);
+    this->feeding = 0;
+}
 void WireFeed::on_gcode_received(void *argument) { 
 
 	Gcode *gcode = static_cast<Gcode *>(argument);
@@ -69,8 +74,7 @@ void WireFeed::on_gcode_received(void *argument) {
             if(gcode->has_letter('S') && !ratio) { 				//this will be the wire feed rate in mmpm, will be a modal command
                 this->rate = gcode->get_value('S');
             }
-            this->feed_pin->write(pwm_duty_cycle()); 	//need to put in the relationship between duty cycle and rate
-            this->feeding = 1;
+			this->on();
 //			THEKERNEL->streams->printf("Wire Feed rate is %0.0f mm/min\nDuty Cycle set to %0.0f %%\n", rate * factor/100.0F, pwm_duty_cycle()*100.0F);
         }
 		if (gcode->m == 751) {	//turn on wire feed ratio calculations
@@ -80,9 +84,7 @@ void WireFeed::on_gcode_received(void *argument) {
 			ratio = 0;
 		}
         if (gcode->m == 760) {
-			THEKERNEL->conveyor->wait_for_idle();
-        	this->feed_pin->write(0);
-        	this->feeding = 0;
+			this->off();
         }
         if (gcode->m == 755) { 							//this will be the wire feed rate override command
         	if(gcode->has_letter('S')) { 
@@ -108,9 +110,15 @@ void WireFeed::on_gcode_received(void *argument) {
         }
     }
 }
-void WireFeed::on_halt() {
+void WireFeed::on() {
 	
-	this->feed_pin->write(0);
+	this->feed_pin->write(pwm_duty_cycle()); 	//need to put in the relationship between duty cycle and rate
+    this->feeding = 1;
+}
+void WireFeed::off() {
+
+	THEKERNEL->conveyor->wait_for_idle();
+    this->feed_pin->write(0);
     this->feeding = 0;
 }
 uint32_t WireFeed::feed_tick(uint32_t dummy) {

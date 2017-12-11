@@ -21,10 +21,13 @@ class WireFeed: public Module {
 	public:
 		WireFeed();
 		~WireFeed() {};
-
+		
 		void on_module_loaded();
-		void on_gcode_received(void *argument);
 		void on_halt();
+		void on_gcode_received(void *argument);	
+
+		void on();
+		void off();
 		
 	private:
 		const Block *block;
