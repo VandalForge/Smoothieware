@@ -7,6 +7,7 @@
 
 #include "libs/Kernel.h"
 
+#include "modules/I2C/Test1.h"
 #include "modules/forge/temperaturefeedback/TemperatureFeedback.h"
 #include "modules/forge/wirefeed/WireFeed.h"
 #include "modules/forge/welder/Welder.h"
@@ -186,8 +187,9 @@ void init() {
     #ifndef NO_TOOLS_ROTARYDELTACALIBRATION
     kernel->add_module( new(AHB0) RotaryDeltaCalibration() );
     #endif
+  kernel->add_module( new(AHB0) IOTest() );         //Custom module for handling I2C commands/g-codes
 	kernel->add_module( new(AHB0) TemperatureFeedback() ); 	//Custom module for printhead temperature feedback control
-    kernel->add_module( new(AHB0) WireFeed() ); 			//Custom module for wire feed motor
+  kernel->add_module( new(AHB0) WireFeed() ); 			//Custom module for wire feed motor
 	kernel->add_module( new(AHB0) Welder() );				//Custom module for welder and high voltage control
 	kernel->add_module( new(AHB0) GasFlow() );				//Custom module for gas flow valve
     #ifndef NONETWORK
